@@ -75,7 +75,7 @@
 				<Select.Trigger class="w-[180px]">{selectedTask}</Select.Trigger>
 				<Select.Content>
 					<Select.Item value="task1">Task 1</Select.Item>
-					<Select.Item value="task2">Task 1</Select.Item>
+					<Select.Item value="task2">Task 2</Select.Item>
 				</Select.Content>
 			</Select.Root>
 		</div>
