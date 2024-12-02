@@ -83,5 +83,5 @@ function validateReport(report: number[]): boolean {
 }
 
 function preprocessor(input: string): number[][] {
-	return input.split('\n').map((report) => report.split(' ').map((levels) => Number(levels)));
+	return input.split('\n').map((report) => report.split(' ').map((level) => Number(level)));
 }
