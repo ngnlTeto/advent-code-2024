@@ -30,7 +30,6 @@ export async function task2(input: string): Promise<string> {
 		}
 	}
 
-
 	// Search for the kinda good lists ?
 	reportItr: for (const report of naughtyList) {
 		for (let i = 0; i < report.length; i++) {
