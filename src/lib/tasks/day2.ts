@@ -13,7 +13,7 @@ export async function task1(input: string): Promise<string> {
 		}
 	}
 
-	return counter.toString();
+	return Promise.resolve(counter.toString());
 }
 
 export async function task2(input: string): Promise<string> {
@@ -41,7 +41,7 @@ export async function task2(input: string): Promise<string> {
 		}
 	}
 
-	return counter.toString();
+	return Promise.resolve(counter.toString());
 }
 
 function validateReport(report: number[]): boolean {

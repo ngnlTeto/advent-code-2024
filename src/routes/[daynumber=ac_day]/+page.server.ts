@@ -3,7 +3,7 @@ import { fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { message, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
-import { tasksMap1, tasksMap2 } from '$lib/tasks';
+import { tasksMap } from '$lib/tasks';
 
 export const load = (async ({ params }) => {
 	if (!Number.isInteger(Number(params.daynumber))) {
@@ -56,7 +56,7 @@ export const actions: Actions = {
 };
 
 async function doDayTask(day: number, input: string): Promise<string> {
-	const task = tasksMap1.get(day);
+	const task = tasksMap.get(day)?.task1;
 	if (task === undefined) {
 		throw Error('No logic for the selected day');
 	}
@@ -64,7 +64,7 @@ async function doDayTask(day: number, input: string): Promise<string> {
 }
 
 async function doSecondDayTask(day: number, input: string): Promise<string> {
-	const task = tasksMap2.get(day);
+	const task = tasksMap.get(day)?.task2;
 	if (task === undefined) {
 		throw Error('No logic for the selected day');
 	}

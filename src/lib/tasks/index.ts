@@ -1,11 +1,12 @@
-import { task1 as day1task1, task2 as day1task2 } from './day1';
-import { task1 as day2task1, task2 as day2task2 } from './day2';
+import * as day1 from './day1';
+import * as day2 from './day2';
 
-export const tasksMap1 = new Map<number, (a: string) => Promise<string>>([
-	[1, day1task1],
-	[2, day2task1]
-]);
-export const tasksMap2 = new Map<number, (a: string) => Promise<string>>([
-	[1, day1task2],
-	[2, day2task2]
+export interface TaskDuo {
+	task1: (a: string) => Promise<string>;
+	task2: (a: string) => Promise<string>;
+}
+
+export const tasksMap = new Map<number, TaskDuo>([
+	[1, { task1: day1.task1, task2: day1.task2 }],
+	[2, { task1: day2.task1, task2: day2.task2 }]
 ]);
