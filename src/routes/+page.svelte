@@ -16,14 +16,14 @@
 			<Button variant="link" target="_blank" href="https://adventofcode.com/">
 				<TreePine />
 				Advent of code
-				</Button>
+			</Button>
 			<LightSwitch />
 		</div>
 		<div class="justify-center">
 			<div class="flex flex-col">
 				<h2 class="block text-xl">Tasks:</h2>
-				{#each Array.from({ length: 24 }, (_, x) => x + 1) as dayNum}
-					<a href="/{dayNum}" class="text-blue-600 underline hover:text-blue-800">Day {dayNum}</a>
+				{#each { length: 24 }, dayNum}
+					<a href="/{dayNum+1}" class="text-blue-600 underline hover:text-blue-800">Day {dayNum+1}</a>
 				{/each}
 			</div>
 		</div>
