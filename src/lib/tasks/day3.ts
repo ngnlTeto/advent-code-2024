@@ -3,11 +3,7 @@ export async function task1(input: string): Promise<string> {
 	const mulArray = input.match(/mul\(\d{1,3},\d{1,3}\)/gm)!;
 
 	for (let i = 0; i < mulArray.length; i++) {
-		let mulStatement = mulArray[i];
-		mulStatement = mulStatement.replace('mul(', '');
-		mulStatement = mulStatement.replace(')', '');
-		const mulNums = mulStatement.split(',').map(Number);
-		sum += mulNums.at(0)! * mulNums.at(1)!;
+		sum += multiplyMulStatement(mulArray[i]);
 	}
 	return Promise.resolve(sum.toString());
 }
@@ -18,24 +14,28 @@ export async function task2(input: string): Promise<string> {
 	let processingActive = true;
 
 	for (let i = 0; i < mulArray.length; i++) {
-		let mulStatement = mulArray[i];
-
-		switch (mulStatement) {
+		switch (mulArray[i]) {
 			case "don't()":
 				processingActive = false;
 				break;
+
 			case 'do()':
 				processingActive = true;
 				break;
+
 			default:
 				if (processingActive) {
-					mulStatement = mulStatement.replace('mul(', '');
-					mulStatement = mulStatement.replace(')', '');
-					const mulNums = mulStatement.split(',').map(Number);
-					sum += mulNums.at(0)! * mulNums.at(1)!;
+					sum += multiplyMulStatement(mulArray[i]);
 				}
 				break;
 		}
 	}
 	return Promise.resolve(sum.toString());
+}
+
+function multiplyMulStatement(mulStatement: string): number {
+	mulStatement = mulStatement.replace('mul(', '');
+	mulStatement = mulStatement.replace(')', '');
+	const mulNums = mulStatement.split(',').map(Number);
+	return mulNums.at(0)! * mulNums.at(1)!;
 }
