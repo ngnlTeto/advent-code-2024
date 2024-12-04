@@ -41,8 +41,8 @@ export async function task1(input: string): Promise<string> {
 	// 45° rotate and evaluation
 	const rotated45: string[][] = [];
 	for (let i = 0; i < summax; i++) rotated45.push([]);
-	for (let j = 0; j < xmasMat[0].length; j++)
-		for (let i = 0; i < xmasMat.length; i++) rotated45[i + j].push(xmasMat[i][j]);
+	for (let i = 0; i < xmasMat.length; i++)
+		for (let j = 0; j < xmasMat[0].length; j++) rotated45[i + j].push(xmasMat[i][j]);
 
 	for (let i = 0; i < rotated45.length; i++) {
 		let forwardLine = '';
@@ -62,8 +62,9 @@ export async function task1(input: string): Promise<string> {
 	const rotated315: string[][] = [];
 	for (let i = 0; i < summax; i++) rotated315.push([]);
 
-	for (let i = xmasMat.length - 1; 0 <= i; i--)
-		for (let j = 0; j < xmasMat[0].length; j++) rotated315[(xmasMat.length - 1- i) + j].push(xmasMat[i][j]);
+	for (let i = 0; i < xmasMat.length; i++)
+		for (let j = 0; j < xmasMat[0].length; j++)
+			rotated315[xmasMat.length - 1 - i + j].push(xmasMat[i][j]);
 
 	for (let i = 0; i < rotated315.length; i++) {
 		let forwardLine = '';
@@ -78,7 +79,6 @@ export async function task1(input: string): Promise<string> {
 		}
 		counter += matchXmas(backwardLine).length;
 	}
-
 
 	//#endregion
 
