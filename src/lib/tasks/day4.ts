@@ -21,7 +21,7 @@ export async function task1(input: string): Promise<string> {
 				) {
 					counter++;
 				}
-				// East1
+				// East
 				if (
 					(xmasMat[i] ?? [])[j + 1] === 'M' &&
 					(xmasMat[i] ?? [])[j + 2] === 'A' &&
