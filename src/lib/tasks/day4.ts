@@ -77,7 +77,61 @@ export async function task1(input: string): Promise<string> {
 }
 
 export async function task2(input: string): Promise<string> {
+	const xmasMat = preprocessor(input);
+	let counter = 0;
 
+	for (let i = 0; i < xmasMat.length; i++) {
+		for (let j = 0; j < xmasMat[0].length; j++) {
+			if (xmasMat[i][j] === 'A') {
+				// M.S
+				// .A.
+				// M.S
+				if (
+					(xmasMat[i - 1] ?? [])[j - 1] === 'M' &&
+					(xmasMat[i - 1] ?? [])[j + 1] === 'S' &&
+					(xmasMat[i + 1] ?? [])[j - 1] === 'M' &&
+					(xmasMat[i + 1] ?? [])[j + 1] === 'S'
+				) {
+					counter++;
+				}
+				// M.M
+				// .A.
+				// S.S
+				if (
+					(xmasMat[i - 1] ?? [])[j - 1] === 'M' &&
+					(xmasMat[i - 1] ?? [])[j + 1] === 'M' &&
+					(xmasMat[i + 1] ?? [])[j - 1] === 'S' &&
+					(xmasMat[i + 1] ?? [])[j + 1] === 'S'
+				) {
+					counter++;
+				}
+				// S.M
+				// .A.
+				// S.M
+				if (
+					(xmasMat[i - 1] ?? [])[j - 1] === 'S' &&
+					(xmasMat[i - 1] ?? [])[j + 1] === 'M' &&
+					(xmasMat[i + 1] ?? [])[j - 1] === 'S' &&
+					(xmasMat[i + 1] ?? [])[j + 1] === 'M'
+				) {
+					counter++;
+				}
+				// S.S
+				// .A.
+				// M.M
+				if (
+					(xmasMat[i - 1] ?? [])[j - 1] === 'S' &&
+					(xmasMat[i - 1] ?? [])[j + 1] === 'S' &&
+					(xmasMat[i + 1] ?? [])[j - 1] === 'M' &&
+					(xmasMat[i + 1] ?? [])[j + 1] === 'M'
+				) {
+					counter++;
+				}
+			}
+		}
+	}
+
+	return Promise.resolve(counter.toString());
 }
 
 function preprocessor(input: string): string[][] {
