@@ -20,7 +20,39 @@ export async function task1(input: string): Promise<string> {
 	return Promise.resolve(sum.toString());
 }
 
-export async function task2(input: string): Promise<string> {}
+export async function task2(input: string): Promise<string> {
+	const updatePlan = preprocessor(input);
+	const validPrints = filterValidPrints(updatePlan);
+	const invalidPrints = updatePlan.printOrder.filter((x) => !validPrints.includes(x));
+	let sum = 0;
+
+	for (const print of invalidPrints) {
+		const applyingRules = updatePlan.rules.filter(
+			(x) => print.includes(x.before) && print.includes(x.before)
+		);
+
+		while (true) {
+			const brokenRule = isPrintValid(print, applyingRules);
+			if (brokenRule === null) {
+				break;
+			}
+
+			const beforeIndex = print.findIndex((p) => p === brokenRule.before);
+			const afterIndex = print.findIndex((p) => p === brokenRule.after);
+
+			// swap
+			const temp = print[beforeIndex];
+			print[beforeIndex] = print[afterIndex];
+			print[afterIndex] = temp;
+		}
+	}
+
+	for (const print of invalidPrints) {
+		sum += print[print.length / 2 - 0.5];
+	}
+
+	return Promise.resolve(sum.toString());
+}
 
 function filterValidPrints(updatePlan: Day5Input): number[][] {
 	const validPrints: number[][] = [];
@@ -39,6 +71,21 @@ function filterValidPrints(updatePlan: Day5Input): number[][] {
 		validPrints.push(print);
 	}
 	return validPrints;
+}
+
+function isPrintValid(print: number[], rules: Rule[]): Rule | null {
+	for (let i = 0; i < rules.length; i++) {
+		const rule = rules[i];
+		const beforeIndex = print.findIndex((p) => p === rule.before);
+		const afterIndex = print.findIndex((p) => p === rule.after);
+
+		if (beforeIndex !== -1 && afterIndex !== -1) {
+			if (!(beforeIndex < afterIndex)) {
+				return rule;
+			}
+		}
+	}
+	return null;
 }
 
 function preprocessor(input: string): Day5Input {
