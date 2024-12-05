@@ -10,12 +10,10 @@ interface Rule {
 
 export async function task1(input: string): Promise<string> {
 	const updatePlan = preprocessor(input);
-	let sum = 0;
 
 	const validPrints = filterValidPrints(updatePlan);
-	for (const print of validPrints) {
-		sum += print[print.length / 2 - 0.5];
-	}
+
+	const sum = validPrints.reduce((sum, print) => sum + print[print.length / 2 - 0.5], 0);
 
 	return Promise.resolve(sum.toString());
 }
