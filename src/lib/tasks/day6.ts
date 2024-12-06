@@ -66,7 +66,7 @@ export async function task2(input: string): Promise<string> {
 
 	do {
 		// check if obstical createsLoop
-        if (isPosGoodForObstacle(map, iPos, jPos, rotationCount)) {
+        if (isPosGoodForObstacle(map, iPos, jPos)) {
             goodPosCount++;
         }
 
@@ -114,10 +114,10 @@ function isPosValid(map: string[][], i: number, j: number): boolean {
 	return acc(map, i, j) !== undefined;
 }
 
-function isPosGoodForObstacle(map: string[][], i: number, j: number, rotation: number): boolean {
+function isPosGoodForObstacle(map: string[][], i: number, j: number): boolean {
 	let iPos = map.findIndex((x) => x.includes('^'));
 	let jPos = map[iPos].indexOf('^') + 1;
-	let rotationCount = rotation;
+	let rotationCount = 0;
 	const stepMax = map.length * map[0].length;
 	let stepCount = 0;
 
