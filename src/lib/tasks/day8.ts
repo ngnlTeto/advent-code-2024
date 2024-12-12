@@ -1,3 +1,5 @@
+import { strToMat } from "./utils";
+
 type AntennaMap = Map<string, { i: number; j: number }[]>;
 
 export async function task1(input: string): Promise<string> {
@@ -140,22 +142,4 @@ function findAntinodesWithResonants(map: AntennaMap, mat: string[][]): { i: numb
 	return antinodeList;
 }
 
-function preprocessor(input: string): string[][] {
-	return input.split('\n').map((line) => line.split(''));
-}
-
-// function drawAntinodes(antinodes: { i: number; j: number }[], mat: string[][]): string {
-// 	const newMat = structuredClone(mat);
-// 	for (const antinode of antinodes) {
-// 		if (mat[antinode.i][antinode.j] === '.') {
-// 			newMat[antinode.i][antinode.j] = '#';
-// 		}
-// 	}
-
-// 	const drawMat: string[] = [];
-// 	for (const row of newMat) {
-// 		drawMat.push(row.join(''));
-// 	}
-
-// 	return drawMat.join('\n');
-// }
+const preprocessor = strToMat;

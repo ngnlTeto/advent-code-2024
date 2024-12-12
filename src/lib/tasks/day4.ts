@@ -1,3 +1,5 @@
+import { strToMat } from "./utils";
+
 export async function task1(input: string): Promise<string> {
 	const xmasMat = preprocessor(input);
 	let counter = 0;
@@ -148,6 +150,4 @@ export async function task2(input: string): Promise<string> {
 	return Promise.resolve(counter.toString());
 }
 
-function preprocessor(input: string): string[][] {
-	return input.split('\n').map((l) => l.split(''));
-}
+const preprocessor = strToMat;
