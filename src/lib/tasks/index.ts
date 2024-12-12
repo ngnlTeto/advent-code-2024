@@ -7,6 +7,7 @@ import * as day6 from './day6';
 import * as day7 from './day7';
 import * as day8 from './day8';
 import * as day9 from './day9';
+import * as day10 from './day10';
 
 export interface TaskDuo {
 	task1: (a: string) => Promise<string>;
@@ -22,5 +23,6 @@ export const tasksMap = new Map<number, TaskDuo>([
 	[6, { task1: day6.task1, task2: day6.task2 }],
 	[7, { task1: day7.task1, task2: day7.task2 }],
 	[8, { task1: day8.task1, task2: day8.task2 }],
-	[9, { task1: day9.task1, task2: day9.task2 }]
+	[9, { task1: day9.task1, task2: day9.task2 }],
+	[10, { task1: day10.task1, task2: day10.task2 }]
 ]);
