@@ -22,5 +22,5 @@ export const tasksMap = new Map<number, TaskDuo>([
 	[6, { task1: day6.task1, task2: day6.task2 }],
 	[7, { task1: day7.task1, task2: day7.task2 }],
 	[8, { task1: day8.task1, task2: day8.task2 }],
-	[9, { task1: day9.task1, task2: day9.task2 }],
+	[9, { task1: day9.task1, task2: day9.task2 }]
 ]);

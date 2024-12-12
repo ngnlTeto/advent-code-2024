@@ -1,4 +1,4 @@
-import { acc } from "./utils";
+import { acc } from './utils';
 
 export async function task1(input: string): Promise<string> {
 	const map = preprocessor(input);
@@ -153,8 +153,6 @@ function putStepsOnMap(map: string[][]): void {
 		}
 	} while (isPosValid(map, iPos, jPos));
 }
-
-
 
 function preprocessor(input: string): string[][] {
 	return input.split('\n').map((line) => line.split(''));

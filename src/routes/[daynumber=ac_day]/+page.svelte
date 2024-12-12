@@ -24,7 +24,16 @@
 		resetForm: false
 	});
 
-	const { form: formData, enhance, constraints, message, delayed, validateForm, capture, restore } = form;
+	const {
+		form: formData,
+		enhance,
+		constraints,
+		message,
+		delayed,
+		validateForm,
+		capture,
+		restore
+	} = form;
 	let isFormValid = $state(false);
 
 	export const snapshot = { capture, restore };
