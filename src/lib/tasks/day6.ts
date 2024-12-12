@@ -1,3 +1,5 @@
+import { acc } from "./utils";
+
 export async function task1(input: string): Promise<string> {
 	const map = preprocessor(input);
 
@@ -152,12 +154,7 @@ function putStepsOnMap(map: string[][]): void {
 	} while (isPosValid(map, iPos, jPos));
 }
 
-/**
- * Access a two dim matrix securly
- */
-function acc<T>(map: T[][], i: number, j: number): T {
-	return (map[i] ?? [])[j];
-}
+
 
 function preprocessor(input: string): string[][] {
 	return input.split('\n').map((line) => line.split(''));
