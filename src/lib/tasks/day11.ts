@@ -1,99 +1,54 @@
-const markovMap: Map<bigint, { firstVal: bigint; secondVal?: bigint }> = new Map();
+const cacheMap: Map<string, bigint> = new Map();
 
 export async function task1(input: string): Promise<string> {
-	let stones = input.split(' ').map(BigInt);
-
-	for (let i = 0; i < 25; i++) {
-		stones = executeRules(stones);
-	}
-
-	return Promise.resolve(stones.length.toString());
-}
-
-export async function task2(input: string): Promise<string> {
 	const stones = input.split(' ').map(BigInt);
-	const iterations = 75;
-
-	// Build markovChain
-	for await (const stone of stones) {
-		resolveStoneToMarkovChain(stone, iterations);
-	}
 
 	let count = 0n;
 	for (const stone of stones) {
-		count += stoneCount(stone, iterations);
-		console.log('Done: ', stone);
+		count += countStones(stone, 25);
 	}
 
 	return Promise.resolve(count.toString());
 }
 
-function resolveStoneToMarkovChain(stone: bigint, maxDepth: number, curDepth: number = 0): void {
-	let newTupel: { firstVal: bigint; secondVal?: bigint };
+export async function task2(input: string): Promise<string> {
+	const stones = input.split(' ').map(BigInt);
 
-	// Rule #1
-	if (stone === 0n) {
-		newTupel = { firstVal: 1n };
-	}
-
-	// Rule #2
-	if (stone.toString().length % 2 === 0) {
-		const stoneStr = stone.toString();
-		newTupel = {
-			firstVal: BigInt(stoneStr.substring(0, stoneStr.length / 2)),
-			secondVal: BigInt(stoneStr.substring(stoneStr.length / 2, stoneStr.length))
-		};
-	} else {
-		// Rule #3
-		newTupel = { firstVal: stone * 2024n };
+	let count = 0n;
+	for (const stone of stones) {
+		count += countStones(stone, 75);
 	}
 
-	markovMap.set(stone, newTupel);
-	if (!markovMap.has(newTupel.firstVal) && curDepth < maxDepth) {
-		resolveStoneToMarkovChain(newTupel.firstVal, maxDepth, curDepth + 1);
-	}
-	if (
-		newTupel.secondVal !== undefined &&
-		!markovMap.has(newTupel.secondVal) &&
-		curDepth < maxDepth
-	) {
-		resolveStoneToMarkovChain(newTupel.secondVal, maxDepth, curDepth + 1);
-	}
+	return Promise.resolve(count.toString());
 }
 
-function stoneCount(stone: bigint, maxDepth: number, curDepth: number = 0): bigint {
-	if (!(curDepth < maxDepth)) {
+function countStones(stone: bigint, maxDepth: number): bigint {
+	if (maxDepth === 0) {
 		return 1n;
 	}
 
-	const results = markovMap.get(stone);
-	let count = 0n;
-
-	count += stoneCount(results!.firstVal, maxDepth, curDepth + 1);
-	if (results?.secondVal !== undefined) {
-		count += stoneCount(results!.secondVal, maxDepth, curDepth + 1);
+	if (cacheMap.has(`${stone}|${maxDepth}`)) {
+		return cacheMap.get(`${stone}|${maxDepth}`)!;
 	}
 
-	return count;
-}
-
-function executeRules(stones: bigint[]): bigint[] {
-	const newStones: bigint[] = [];
-	for (const stone of stones) {
-		// Rule #1
-		if (stone === 0n) {
-			newStones.push(1n);
-		} else {
-			// Rule #2
-			if (stone.toString().length % 2 === 0) {
-				const stoneStr = stone.toString();
-				newStones.push(BigInt(stoneStr.substring(0, stoneStr.length / 2)));
-				newStones.push(BigInt(stoneStr.substring(stoneStr.length / 2, stoneStr.length)));
-			} else {
-				// Rule #3
-				newStones.push(stone * 2024n);
-			}
-		}
+	if (stone === 0n) {
+		const result = countStones(1n, maxDepth - 1);
+		cacheMap.set(`${stone}|${maxDepth}`, result);
+		return result;
 	}
-	return newStones;
+
+	if (stone.toString().length % 2 !== 0) {
+		const result = countStones(stone * 2024n, maxDepth - 1);
+		cacheMap.set(`${stone}|${maxDepth}`, result);
+		return result;
+	}
+
+	const num1 = BigInt(stone.toString().substring(0, stone.toString().length / 2));
+	const num2 = BigInt(
+		stone.toString().substring(stone.toString().length / 2, stone.toString().length)
+	);
+
+	const result = countStones(num1, maxDepth - 1) + countStones(num2, maxDepth - 1);
+	cacheMap.set(`${stone}|${maxDepth}`, result);
+	return result
 }
