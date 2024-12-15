@@ -33,6 +33,7 @@ export async function task1(input: string): Promise<string> {
 
 	return Promise.resolve(sum.toString());
 }
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function task2(input: string): Promise<string> {
 	// Sooo..., I know how to solve this one. There are three versions in my head how to solve this.
 	// 1. Simple Vectorization: Making 2 vectors for x and y
