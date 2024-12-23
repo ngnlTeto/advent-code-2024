@@ -1,7 +1,7 @@
 interface ClawMachine {
-	buttonA: Coordinates;
-	buttonB: Coordinates;
-	prize: Coordinates;
+	a: Coordinates;
+	b: Coordinates;
+	sol: Coordinates;
 }
 
 interface Coordinates {
@@ -11,35 +11,23 @@ interface Coordinates {
 
 export async function task1(input: string): Promise<string> {
 	const clawMachines = preprocessor(input);
-	let sum = 0;
 
-	for (const cm of clawMachines) {
-		let winningCost = Number.MAX_VALUE;
-		for (let i = 0; i < 101; i++) {
-			for (let j = 0; j < 101; j++) {
-				const y = cm.buttonA.y * i + cm.buttonB.y * j;
-				const x = cm.buttonA.x * i + cm.buttonB.x * j;
-				if (cm.prize.x === x && cm.prize.y === y) {
-					const cost = i * 3 + j;
-					if (cost < winningCost) {
-						winningCost = cost;
-					}
-				}
-			}
-		}
+	const solution = calcMachines(clawMachines);
 
-		sum += Number.MAX_VALUE !== winningCost ? winningCost : 0;
-	}
-
-	return Promise.resolve(sum.toString());
+	return Promise.resolve(solution.toString());
 }
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
 export async function task2(input: string): Promise<string> {
-	// Sooo..., I know how to solve this one. There are three versions in my head how to solve this.
-	// 1. Simple Vectorization: Making 2 vectors for x and y
-	// 2. Semi-Vectorization: Making 3 dimonsional vectors for x, y and a machine dim.
-	// 3. Full-Vectorization: Making 4 dimonsional vectors  for x, y, a machine dim. and a dim. for the pricing scale
-	return Promise.resolve("Soooorrrrryyyyy. No solution for that one");
+	const clawMachines = preprocessor(input);
+
+	clawMachines.forEach((cm) => {
+		cm.sol.x += 10000000000000;
+		cm.sol.y += 10000000000000;
+	});
+
+	const solution = calcMachines(clawMachines);
+
+	return Promise.resolve(solution.toString());
 }
 
 function preprocessor(input: string): ClawMachine[] {
@@ -52,9 +40,23 @@ function preprocessor(input: string): ClawMachine[] {
 		const prizeResult = rows[2].match(/\d+/g);
 
 		return {
-			buttonA: { x: Number(buttonAResult?.[0]), y: Number(buttonAResult?.[1]) },
-			buttonB: { x: Number(buttonBResult?.[0]), y: Number(buttonBResult?.[1]) },
-			prize: { x: Number(prizeResult?.[0]), y: Number(prizeResult?.[1]) }
+			a: { x: Number(buttonAResult?.[0]), y: Number(buttonAResult?.[1]) },
+			b: { x: Number(buttonBResult?.[0]), y: Number(buttonBResult?.[1]) },
+			sol: { x: Number(prizeResult?.[0]), y: Number(prizeResult?.[1]) }
 		} as ClawMachine;
 	});
+}
+
+function calcMachines(clawMachines: ClawMachine[]): number {
+	let sum = 0;
+
+	for (const cm of clawMachines) {
+		const bPresses = (cm.a.x * cm.sol.y - cm.sol.x * cm.a.y) / (cm.a.x * cm.b.y - cm.b.x * cm.a.y);
+		const aPresses = (cm.sol.y - bPresses * cm.b.y) / cm.a.y;
+
+		if (Number.isInteger(aPresses) && Number.isInteger(bPresses)) {
+			sum += aPresses * 3 + bPresses;
+		}
+	}
+	return sum;
 }
