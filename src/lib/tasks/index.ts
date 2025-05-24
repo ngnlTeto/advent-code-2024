@@ -11,6 +11,7 @@ import * as day10 from './day10';
 import * as day11 from './day11';
 import * as day12 from './day12';
 import * as day13 from './day13';
+import * as day14 from './day14';
 
 export interface TaskDuo {
 	task1: (a: string) => Promise<string>;
@@ -31,4 +32,5 @@ export const tasksMap = new Map<number, TaskDuo>([
 	[11, { task1: day11.task1, task2: day11.task2 }],
 	[12, { task1: day12.task1, task2: day12.task2 }],
 	[13, { task1: day13.task1, task2: day13.task2 }],
+	[14, { task1: day14.task1, task2: day14.task2 }],
 ]);
