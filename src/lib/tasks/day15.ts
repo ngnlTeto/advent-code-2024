@@ -2,7 +2,9 @@ enum WarehouseItem {
 	ROBOT,
 	SPACE,
 	BOX,
-	WALL
+	WALL,
+	LEFT_WALL,
+	RIGHT_WALL
 }
 
 type WarehouseMap = WarehouseItem[][];
@@ -20,9 +22,7 @@ interface Coordinates {
 }
 
 export async function task1(input: string): Promise<string> {
-	const preprocessorResults = preprocessor(input, false);
-	const map = preprocessorResults.map as WarehouseMap;
-	const instructions = preprocessorResults.instructions;
+	const { map, instructions } = preprocessor(input);
 
 	for (const instruction of instructions) {
 		const robotCroods = findRobot(map);
@@ -33,7 +33,22 @@ export async function task1(input: string): Promise<string> {
 	return Promise.resolve(calcScore(map).toString());
 }
 
-export async function task2(input: string): Promise<string> {}
+export async function task2(input: string): Promise<string> {
+	const inputWithBiggerMap = input
+		.replaceAll('#', '##')
+		.replaceAll('O', '[]')
+		.replaceAll('.', '..')
+		.replaceAll('@', '@.');
+	const { map, instructions } = preprocessor(inputWithBiggerMap);
+
+	for (const instruction of instructions) {
+		const robotCroods = findRobot(map);
+		moveItem(map, instruction, robotCroods);
+		// console.log(drawMap(map));
+		// await sleep(100);
+	}
+	return Promise.resolve(calcScore(map).toString());
+}
 
 // The return value determins if the move was possible
 function moveItem(map: WarehouseMap, direction: Direction, coords: Coordinates): boolean {
@@ -50,18 +65,52 @@ function moveItem(map: WarehouseMap, direction: Direction, coords: Coordinates):
 		}
 	})();
 
-	if (map[nextCoords.y][nextCoords.x] === WarehouseItem.BOX) {
-		const movePossible = moveItem(map, direction, nextCoords);
-		if (movePossible) {
-			map[nextCoords.y][nextCoords.x] = map[coords.y][coords.x];
-			map[coords.y][coords.x] = WarehouseItem.SPACE;
-			return true;
-		} else {
-			return false;
-		}
-	}
-
 	switch (map[nextCoords.y][nextCoords.x]) {
+		case WarehouseItem.LEFT_WALL:
+		case WarehouseItem.RIGHT_WALL:
+		case WarehouseItem.BOX: {
+			if (
+				(map[nextCoords.y][nextCoords.x] === WarehouseItem.LEFT_WALL ||
+					map[nextCoords.y][nextCoords.x] === WarehouseItem.RIGHT_WALL) &&
+				(direction === Direction.UP || direction === Direction.DOWN)
+			) {
+				// a bit complex...
+				const box1Cords = nextCoords;
+				const box2Cords: Coordinates =
+					map[nextCoords.y][nextCoords.x] === WarehouseItem.LEFT_WALL
+						? { x: nextCoords.x + 1, y: nextCoords.y }
+						: { x: nextCoords.x - 1, y: nextCoords.y };
+
+				const mapBackup = structuredClone(map);
+
+				// try move
+				const movePossible =
+					moveItem(map, direction, box1Cords) && moveItem(map, direction, box2Cords);
+
+				if (movePossible) {
+					map[nextCoords.y][nextCoords.x] = map[coords.y][coords.x];
+					map[coords.y][coords.x] = WarehouseItem.SPACE;
+					return true;
+				} else {
+					// restore backup
+					for (let y = 0; y < map.length; y++) {
+						for (let x = 0; x < map[y].length; x++) {
+							map[y][x] = mapBackup[y][x];
+						}
+					}
+					return false;
+				}
+			} else {
+				const movePossible = moveItem(map, direction, nextCoords);
+				if (movePossible) {
+					map[nextCoords.y][nextCoords.x] = map[coords.y][coords.x];
+					map[coords.y][coords.x] = WarehouseItem.SPACE;
+					return true;
+				} else {
+					return false;
+				}
+			}
+		}
 		case WarehouseItem.SPACE:
 			map[nextCoords.y][nextCoords.x] = map[coords.y][coords.x];
 			map[coords.y][coords.x] = WarehouseItem.SPACE;
@@ -93,7 +142,7 @@ function calcScore(map: WarehouseMap): number {
 	for (let i = 0; i < map.length; i++) {
 		for (let j = 0; j < map[i].length; j++) {
 			const tile = map[i][j];
-			if (tile === WarehouseItem.BOX) {
+			if (tile === WarehouseItem.BOX || tile === WarehouseItem.LEFT_WALL) {
 				boxCoords.push({ x: j, y: i });
 			}
 		}
@@ -102,34 +151,32 @@ function calcScore(map: WarehouseMap): number {
 	return boxCoords.map((x) => calcGpsScore(x)).reduce((sum, x) => (sum += x), 0);
 }
 
-function preprocessor(
-	input: string,
-	rawMap: boolean
-): { map: WarehouseMap | string; instructions: Direction[] } {
+function preprocessor(input: string): { map: WarehouseMap; instructions: Direction[] } {
 	const [mapString, instructionString] = input.split('\n\n');
 
 	// build map
-	let map: WarehouseMap | string = [];
-	if (rawMap) {
-		map = mapString;
-	} else {
-		for (const mapRow of mapString.split('\n')) {
-			const warehouseRow = mapRow.split('').map((tile) => {
-				switch (tile) {
-					case '#':
-						return WarehouseItem.WALL;
-					case '.':
-						return WarehouseItem.SPACE;
-					case 'O':
-						return WarehouseItem.BOX;
-					case '@':
-						return WarehouseItem.ROBOT;
-					default:
-						throw Error('Bad map input');
-				}
-			});
-			map.push(warehouseRow);
-		}
+	const map: WarehouseMap = [];
+
+	for (const mapRow of mapString.split('\n')) {
+		const warehouseRow = mapRow.split('').map((tile) => {
+			switch (tile) {
+				case '#':
+					return WarehouseItem.WALL;
+				case '.':
+					return WarehouseItem.SPACE;
+				case 'O':
+					return WarehouseItem.BOX;
+				case '@':
+					return WarehouseItem.ROBOT;
+				case '[':
+					return WarehouseItem.LEFT_WALL;
+				case ']':
+					return WarehouseItem.RIGHT_WALL;
+				default:
+					throw Error('Bad map input');
+			}
+		});
+		map.push(warehouseRow);
 	}
 
 	// build instructions
@@ -165,6 +212,10 @@ function preprocessor(
 // 				return 'O';
 // 			case WarehouseItem.WALL:
 // 				return '#';
+// 			case WarehouseItem.LEFT_WALL:
+// 				return '[';
+// 			case WarehouseItem.RIGHT_WALL:
+// 				return ']';
 // 		}
 // 	}
 
